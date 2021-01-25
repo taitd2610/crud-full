@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import path from "path";
+import router from "./server/routes/router.js";
+import connectDB from "./server/database/connection.js";
 
 // Loads environment variables from config.env file into process.env
 dotenv.config({ path: "config.env" });
@@ -13,6 +15,9 @@ var app = express();
 
 // Log requests
 app.use(morgan("tiny"));
+
+// MongoDB connection
+connectDB();
 
 // Parse request to body-parser
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -45,9 +50,8 @@ app.use("/js", express.static(path.resolve(currentPath, "assets/js")));
 //   });
 // });
 
-app.get("/", (req, res) => {
-  res.render("index");
-});
+// Load routers
+app.use("/", router);
 
 app.listen(PORT, (error) => {
   if (error) {
